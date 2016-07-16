@@ -10,7 +10,7 @@
 /**
  * Config section
  */
-var SERVER_PORT = 8080;
+var SERVER_PORT = 3000;
 
 var express = require('express');
 var app = express();
@@ -20,5 +20,5 @@ app.get('/', function (req, res) {
 });
 
 app.listen(SERVER_PORT, function () {
-    console.log('Example app listening on port 3000!');
+    console.log('Example app listening on port ' + SERVER_PORT + '!');
 });
