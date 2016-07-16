@@ -10,7 +10,7 @@
 /**
  * Config section
  */
-var SERVER_PORT = 3000;
+var SERVER_PORT = process.env.PORT || 3000;
 
 var express = require('express');
 var app = express();
