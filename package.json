@@ -2,7 +2,7 @@
   "name": "euql1n-hub",
   "private": true,
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "bcrypt": "^0.8.7",
