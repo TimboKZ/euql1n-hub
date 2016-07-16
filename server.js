@@ -22,11 +22,11 @@ try {
  */
 const SERVER_PORT = process.env.PORT || 3000;
 const SALT_ROUNDS = 10;
-const DB_HOST = process.env.DB_HOST || DB_CONFIG.DB_HOST;
-const DB_PORT = process.env.DB_PORT || DB_CONFIG.DB_PORT;
-const DB_NAME = process.env.DB_NAME || DB_CONFIG.DB_NAME;
-const DB_USER = process.env.DB_USER || DB_CONFIG.DB_USER;
-const DB_PASS = process.env.DB_PASS || DB_CONFIG.DB_PASS;
+if(!process.env.PGHOST) process.env.PGHOST = DB_CONFIG.DB_HOST;
+if(!process.env.PGPORT) process.env.PGPORT = DB_CONFIG.DB_PORT;
+if(!process.env.PGDATABASE) process.env.PGDATABASE = DB_CONFIG.DB_NAME;
+if(!process.env.PGUSER) process.env.PGUSER = DB_CONFIG.DB_HOST;
+if(!process.env.PGPASSWORD) process.env.PGPASSWORD = DB_CONFIG.DB_PASS;
 
 /**
  * Importing required modules
@@ -34,15 +34,15 @@ const DB_PASS = process.env.DB_PASS || DB_CONFIG.DB_PASS;
 var express = require('express');
 var app = express();
 var router = express.Router();
+var pg = require('pg');
 
 /**
  * Setting up static files in public directory
  */
 app.use(express.static(__dirname + '/public'));
 
-app.get('/api', function (req, res) {
-    res.send('<h1>' + DB_HOST + '</h1>');
-    // return res.render('public/index.html');
+app.get('/api/v1', function (req, res) {
+    res.send('<h1>' + process.env.PGUSER + '</h1>');
 });
 
 app.listen(SERVER_PORT, function () {
