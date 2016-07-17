@@ -4237,8 +4237,26 @@
 	            });
 	        }
 	    };
+	    /**
+	     * TODO: Extract this into a helper class
+	     *
+	     * @returns {string}
+	     */
+	    Reminder.prototype.getCompletedString = function () {
+	        var monthNames = [
+	            "January", "February", "March",
+	            "April", "May", "June", "July",
+	            "August", "September", "October",
+	            "November", "December",
+	        ];
+	        var date = this.state.completed;
+	        var day = date.getDate();
+	        var monthIndex = date.getMonth();
+	        var year = date.getFullYear();
+	        return monthNames[monthIndex] + ' ' + day + ', ' + year;
+	    };
 	    Reminder.prototype.render = function () {
-	        return (React.createElement("a", {href: "#", onClick: this.complete.bind(this), className: 'list-group-item' + (this.state.overdue ? ' list-group-item-warning' : '')}, this.state.overdue ? (React.createElement("span", {className: "label label-warning label-pill pull-xs-right"}, "Overdue")) : null, React.createElement("p", {className: "list-group-item-text"}, React.createElement("strong", null, this.props.reminder.name), React.createElement("br", null), this.props.reminder.description + ' Last completed on ', this.state.overdue ? (React.createElement("strong", null, React.createElement("br", null), React.createElement("br", null), this.state.overdueDays + ' day' + (this.state.overdueDays === 1 ? '' : 's') +
+	        return (React.createElement("a", {href: "#", onClick: this.complete.bind(this), className: 'list-group-item' + (this.state.overdue ? ' list-group-item-warning' : '')}, this.state.overdue ? (React.createElement("span", {className: "label label-warning label-pill pull-xs-right"}, "Overdue")) : null, React.createElement("p", {className: "list-group-item-text"}, React.createElement("strong", null, this.props.reminder.name), React.createElement("br", null), this.props.reminder.description + ' Last completed on ' + this.getCompletedString(), this.state.overdue ? (React.createElement("strong", null, React.createElement("br", null), React.createElement("br", null), this.state.overdueDays + ' day' + (this.state.overdueDays === 1 ? '' : 's') +
 	            ' overdue. Tap to complete.')) : ''), React.createElement("div", {className: "clearfix"})));
 	    };
 	    return Reminder;

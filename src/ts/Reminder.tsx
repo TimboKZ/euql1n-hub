@@ -77,6 +77,27 @@ export class Reminder extends Component<IReminderProps, IReminderState> {
         }
     }
 
+    /**
+     * TODO: Extract this into a helper class
+     *
+     * @returns {string}
+     */
+    public getCompletedString(): string {
+        let monthNames = [
+            "January", "February", "March",
+            "April", "May", "June", "July",
+            "August", "September", "October",
+            "November", "December",
+        ];
+
+        let date = this.state.completed;
+        let day = date.getDate();
+        let monthIndex = date.getMonth();
+        let year = date.getFullYear();
+
+        return monthNames[monthIndex] + ' ' + day + ', ' + year;
+    }
+
     public render() {
         return (
             <a href="#" onClick={this.complete.bind(this)}
@@ -87,7 +108,7 @@ export class Reminder extends Component<IReminderProps, IReminderState> {
                 <p className="list-group-item-text">
                     <strong>{this.props.reminder.name}</strong>
                     <br/>
-                    {this.props.reminder.description + ' Last completed on '}
+                    {this.props.reminder.description + ' Last completed on ' + this.getCompletedString()}
                     {this.state.overdue ? (
                         <strong>
                             <br/>
