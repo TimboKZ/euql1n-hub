@@ -23,7 +23,14 @@ export interface ILoginState {
     errorMessage: string;
 }
 
+export interface ILoginRefs {
+    password: HTMLInputElement;
+    username: HTMLInputElement;
+}
+
 export class Login extends Component<ILoginProps, ILoginState> {
+    protected refs: ILoginRefs;
+
     constructor(props: ILoginProps) {
         super(props);
         this.state = {
@@ -33,7 +40,6 @@ export class Login extends Component<ILoginProps, ILoginState> {
 
     private signIn(event: Event) {
         event.preventDefault();
-
         let credentials: IUserCredentials = {
             password: this.refs.password.value,
             username: this.refs.username.value,

@@ -24,7 +24,7 @@ const SERVICE_ID = 1;
 const SERVER_PORT = process.env.PORT || 3000;
 const SALT_ROUNDS = 10;
 const API_PATH = '/api/v1';
-const TOKEN_LIFETIME = 2 * 60 * 60 * 1000;
+const TOKEN_LIFETIME = 24 * 60 * 60 * 1000;
 if (!process.env.PGHOST) process.env.PGHOST = DB_CONFIG.DB_HOST;
 if (!process.env.PGPORT) process.env.PGPORT = DB_CONFIG.DB_PORT;
 if (!process.env.PGDATABASE) process.env.PGDATABASE = DB_CONFIG.DB_NAME;
@@ -122,13 +122,13 @@ app.get(API_PATH + '/routine_reminders', function (req, res) {
  */
 app.post(API_PATH + '/routine_reminders/:id', function (req, res) {
     verifyToken(res, req, function (client, done) {
-        var reminder_id = req.body.id;
+        var reminder_id = req.params.id;
         var query = 'UPDATE routine_reminders SET completed = ($1) WHERE id = ($2)';
         var params = [new Date(), reminder_id];
-        dbQuery(res, client, query, params, function (result) {
+        dbQuery(res, client, query, params, function () {
             var response = {
                 success: true,
-                data: result
+                data: reminder_id
             };
             res.json(response);
             done();
@@ -139,7 +139,7 @@ app.post(API_PATH + '/routine_reminders/:id', function (req, res) {
 /**
  * Return ongoing subscriptions
  */
-app.post(API_PATH + '/ongoing_subscriptions', function (req, res) {
+app.get(API_PATH + '/ongoing_subscriptions', function (req, res) {
     verifyToken(res, req, function (client, done) {
         var query = 'SELECT * FROM ongoing_subscriptions';
         var params = [];
@@ -185,7 +185,7 @@ function verifyToken(res, req, callback) {
                         now.setTime(now.getTime() + TOKEN_LIFETIME);
                         query = 'UPDATE auth_tokens SET expires = ($1) WHERE id = ($2)';
                         params = [now, row.id];
-                        dbQuery(res, client, params, function () {
+                        dbQuery(res, client, query, params, function () {
                             callback(client, done);
                         }, done);
                     } else {

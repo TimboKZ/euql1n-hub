@@ -1,7 +1,7 @@
 import Auth from "./Auth";
+import {IReminderApi, Reminder} from "./Reminder";
 import * as React from "react";
 import {Component} from "react";
-import {Reminder} from "./Reminder";
 /**
  * Dashboard component.
  *
@@ -12,16 +12,53 @@ import {Reminder} from "./Reminder";
  */
 
 export interface IDashboardProps {
-    compiler: string;
-    framework: string;
     history: any;
 }
 
-export class Dashboard extends Component<IDashboardProps, {}> {
-    private logout(event) {
-        event.preventDefault();
+export interface IDashboardState {
+    reminders: IReminderApi[];
+}
+
+export class Dashboard extends Component<IDashboardProps, IDashboardState> {
+    constructor(props: IDashboardProps) {
+        super(props);
+        this.state = {
+            reminders: [],
+        };
+        this.loadReminders();
+    }
+
+    private logout(event: Event = null) {
+        if (event) {
+            event.preventDefault();
+        }
         Auth.destroyToken();
         this.props.history.push('/login');
+    }
+
+    private loadReminders() {
+        Auth.ajaxGet('/api/v1/routine_reminders', {}, (error, response) => {
+            if (error) {
+                if (error.unauthorised) {
+                    alert(error.message + ' \nYou will be logged out.');
+                    return this.logout();
+                }
+                return alert(error.message);
+            }
+            if (response.success) {
+                this.setState({
+                    reminders: response.data.rows,
+                });
+            } else {
+                alert('Request failed for an unknown reason.');
+            }
+        });
+    }
+
+    private renderReminders(): JSX.Element[] {
+        return this.state.reminders.map((reminder) => (
+            <Reminder ref={'reminder-' + reminder.id} key={reminder.id} reminder={reminder}/>
+        ));
     }
 
     public render() {
@@ -39,7 +76,7 @@ export class Dashboard extends Component<IDashboardProps, {}> {
                 </nav>
 
                 <div className="list-group m-t-1">
-                    <Reminder/>
+                    {this.renderReminders()}
                 </div>
             </div>
         );

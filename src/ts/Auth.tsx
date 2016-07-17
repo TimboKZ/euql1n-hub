@@ -1,4 +1,4 @@
-import {API, IUserCredentials} from "./Api";
+import {API, IApiError, IApiResponse, IUserCredentials} from "./Api";
 /**
  * Auth class
  *
@@ -9,6 +9,7 @@ import {API, IUserCredentials} from "./Api";
  */
 
 export interface IAuthError {
+    unauthorised: boolean;
     message: string;
 }
 
@@ -18,12 +19,16 @@ export default class Auth {
 
     public static requestToken(request: IUserCredentials, callback: (error: IAuthError) => void) {
         if (!request.username || !request.password) {
-            return callback({message: 'Fill all fields.'});
+            return callback({
+                message: 'Fill all fields.',
+                unauthorised: true,
+            });
         }
         API.post('/api/v1/auth', request, function (error, response) {
             if (error) {
                 return callback({
                     message: 'A ' + error.blame + ' has occurred: ' + error.message,
+                    unauthorised: true,
                 });
             }
             Auth.setToken(response.data);
@@ -45,5 +50,31 @@ export default class Auth {
 
     public static isAuthorised(): boolean {
         return Auth.authorised;
+    }
+
+    public static ajaxGet(url: string,
+                          data: any = {},
+                          callback: (error: IAuthError, response: IApiResponse) => void) {
+        data.auth_token = Auth.token;
+        API.get(url, data, Auth.ajaxCallback.bind(this, callback));
+    }
+
+    public static ajaxPost(url: string,
+                           data: any = {},
+                           callback: (error: IAuthError, response: IApiResponse) => void) {
+        data.auth_token = Auth.token;
+        API.post(url, data, Auth.ajaxCallback.bind(this, callback));
+    }
+
+    public static ajaxCallback(callback: (error: IAuthError, response: IApiResponse) => void,
+                               error: IApiError,
+                               response: IApiResponse) {
+        if (error) {
+            return callback({
+                message: error.message,
+                unauthorised: error.status === 401 || error.status === 403,
+            }, null);
+        }
+        callback(null, response);
     }
 }

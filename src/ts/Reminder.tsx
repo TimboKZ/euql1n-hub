@@ -1,3 +1,4 @@
+import Auth from "./Auth";
 import * as React from "react";
 import {Component} from "react";
 /**
@@ -16,35 +17,88 @@ export interface IReminderApi {
     is_weekly: boolean;
     weekday: number;
     interval: number;
-    completed: Date;
+    completed: string;
 }
 
 export interface IReminderProps {
-    compiler: string;
-    framework: string;
-    location: any;
-    router: any;
+    reminder: IReminderApi;
     history: any;
 }
 
 export interface IReminderState {
-    errorMessage: string;
+    completed: Date;
+    overdue: boolean;
+    overdueDays: number;
 }
 
 export class Reminder extends Component<IReminderProps, IReminderState> {
     constructor(props: IReminderProps) {
         super(props);
+        let now = new Date();
+        let completed = new Date(this.props.reminder.completed);
+        let overdueDays = Math.max(0, Math.floor((now.getTime() - completed.getTime()) / (24 * 60 * 60 * 1000)));
         this.state = {
-            errorMessage: null,
+            completed,
+            overdue: overdueDays > 0,
+            overdueDays: overdueDays,
         };
+    }
+
+    private logout(event: Event = null) {
+        if (event) {
+            event.preventDefault();
+        }
+        Auth.destroyToken();
+        this.props.history.push('/login');
+    }
+
+    private complete(event: Event) {
+        event.preventDefault();
+        if (confirm('Complete "' + this.props.reminder.name + '"?')) {
+            Auth.ajaxPost('/api/v1/routine_reminders/' + this.props.reminder.id, {}, (error, response) => {
+                if (error) {
+                    if (error.unauthorised) {
+                        alert(error.message + ' \nYou will be logged out.');
+                        return this.logout();
+                    }
+                    return alert(error.message);
+                }
+                console.log(response);
+                if (response.success) {
+                    this.setState({
+                        completed: new Date(),
+                        overdue: false,
+                        overdueDays: 0,
+                    });
+                } else {
+                    alert('Request failed for an unknown reason.');
+                }
+            });
+        }
     }
 
     public render() {
         return (
-            <div href="#" className="list-group-item active">
-                <h4 className="list-group-item-heading">List group item heading</h4>
-                <p className="list-group-item-text">Risus varius blandit.</p>
-            </div>
+            <a href="#" onClick={this.complete.bind(this)}
+               className={'list-group-item' + (this.state.overdue ? ' list-group-item-warning' : '')}>
+                { this.state.overdue ? (
+                    <span className="label label-warning label-pill pull-xs-right">Overdue</span>
+                ) : null}
+                <p className="list-group-item-text">
+                    <strong>{this.props.reminder.name}</strong>
+                    <br/>
+                    {this.props.reminder.description + ' Last completed on '}
+                    {this.state.overdue ? (
+                        <strong>
+                            <br/>
+                            <br/>
+                            {this.state.overdueDays + ' day' + (this.state.overdueDays === 1 ? '' : 's') +
+                            ' overdue. Tap to complete.'}
+                        </strong>
+                    ) : ''}
+                </p>
+                <div className="clearfix"/>
+            </a>
         );
     }
 }

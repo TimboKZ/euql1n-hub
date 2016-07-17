@@ -25,17 +25,25 @@ export interface IApiError {
 }
 
 export class API {
+    public static get(url: string, data: any, callback: (error: IApiError, response: IApiResponse) => void) {
+        API.ajax('GET', url, data, callback);
+    }
+
     public static post(url: string, data: any, callback: (error: IApiError, response: IApiResponse) => void) {
+        API.ajax('POST', url, data, callback);
+    }
+
+    private static ajax(type: string, url: string, data: any,
+                        callback: (error: IApiError, response: IApiResponse) => void) {
         $.ajax({
             data: data,
             dataType: 'json',
             success: function (response) {
                 callback(null, response);
             },
-            type: 'POST',
+            type: type,
             url: url,
         }).fail(function (xhr, textStatus, errorThrown) {
-            console.log(xhr);
             let blame: string = (xhr.status + '')[0] === '5' ? 'server' : 'client';
             let response: IApiResponse = $.parseJSON(xhr.responseText);
             let message: string;
