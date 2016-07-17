@@ -24,6 +24,7 @@ const SERVICE_ID = 1;
 const SERVER_PORT = process.env.PORT || 3000;
 const SALT_ROUNDS = 10;
 const API_PATH = '/api/v1';
+const TOKEN_LIFETIME = 2 * 60 * 60 * 1000;
 if (!process.env.PGHOST) process.env.PGHOST = DB_CONFIG.DB_HOST;
 if (!process.env.PGPORT) process.env.PGPORT = DB_CONFIG.DB_PORT;
 if (!process.env.PGDATABASE) process.env.PGDATABASE = DB_CONFIG.DB_NAME;
@@ -66,7 +67,7 @@ app.post(API_PATH + '/auth', function (req, res) {
     if (!username && !password) return handleError(res, null, 'Invalid login credentials.', 400);
     dbConnect(res, function (client, done) {
         var invalidCredentials = function () {
-            handleError(res, null, 'Unrecognised login credentials.', 401);
+            handleError(res, null, 'Unrecognised login credentials.', 400);
             done();
         };
         var query = 'SELECT * FROM users WHERE service_id = ($1) AND username = ($2)';
@@ -80,11 +81,10 @@ app.post(API_PATH + '/auth', function (req, res) {
                         hashCreate(res, token, function (hash) {
                             query = "INSERT INTO auth_tokens(service_id, user_id, token, expires, ip) values(($1), ($2), ($3), ($4), ($5))";
                             var expires = new Date();
-                            var hours = 2;
-                            expires.setTime(expires.getTime() + (hours * 60 * 60 * 1000));
+                            expires.setTime(expires.getTime() + TOKEN_LIFETIME);
                             params = [SERVICE_ID, row.id, hash, expires, ip];
                             dbQuery(res, client, query, params, function () {
-                                res.json({success: true, token: hash});
+                                res.json({success: true, data: hash});
                                 done();
                             }, done);
                         });
@@ -103,19 +103,17 @@ app.post(API_PATH + '/auth', function (req, res) {
  * Return routine reminders
  */
 app.get(API_PATH + '/routine_reminders', function (req, res) {
-    app.get(API_PATH + '/routine_reminders', function (req, res) {
-        verifyToken(res, req, function (client, done) {
-            var query = 'SELECT * FROM routine_reminders';
-            var params = [];
-            dbQuery(res, client, query, params, function (result) {
-                var response = {
-                    success: true,
-                    data: result
-                };
-                res.json(response);
-                done();
-            }, done);
-        });
+    verifyToken(res, req, function (client, done) {
+        var query = 'SELECT * FROM routine_reminders';
+        var params = [];
+        dbQuery(res, client, query, params, function (result) {
+            var response = {
+                success: true,
+                data: result
+            };
+            res.json(response);
+            done();
+        }, done);
     });
 });
 
@@ -159,8 +157,8 @@ app.post(API_PATH + '/ongoing_subscriptions', function (req, res) {
 /**
  * Routing all requests to index.html
  */
-app.get('*', function(req, res) {
-    res.sendfile('index.html');
+app.get('*', function (req, res) {
+    res.sendFile(__dirname + '/index.html');
 });
 
 /**
@@ -171,7 +169,7 @@ app.get('*', function(req, res) {
  * @param callback
  */
 function verifyToken(res, req, callback) {
-    var auth_token = req.body.auth_token;
+    var auth_token = req.body.auth_token || req.query.auth_token;
     if (!auth_token) return handleError(res, null, 'No auth token provided.', 400);
     dbConnect(res, function (client, done) {
         var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -184,7 +182,12 @@ function verifyToken(res, req, callback) {
                     var now = new Date();
                     var expires = new Date(row.expires);
                     if (expires > now) {
-                        callback(client, done);
+                        now.setTime(now.getTime() + TOKEN_LIFETIME);
+                        query = 'UPDATE auth_tokens SET expires = ($1) WHERE id = ($2)';
+                        params = [now, row.id];
+                        dbQuery(res, client, params, function () {
+                            callback(client, done);
+                        }, done);
                     } else {
                         handleError(res, null, 'Auth token has expired.', 403);
                         done();

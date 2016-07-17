@@ -1,3 +1,4 @@
+import {API, IUserCredentials} from "./Api";
 /**
  * Auth class
  *
@@ -7,11 +8,42 @@
  * @version 0.0.1
  */
 
+export interface IAuthError {
+    message: string;
+}
+
 export default class Auth {
-    private static authorised: boolean = false;
-    private static token: string;
+    private static authorised: boolean = !!localStorage.getItem('token');
+    private static token: string = localStorage.getItem('token') || null;
+
+    public static requestToken(request: IUserCredentials, callback: (error: IAuthError) => void) {
+        if (!request.username || !request.password) {
+            return callback({message: 'Fill all fields.'});
+        }
+        API.post('/api/v1/auth', request, function (error, response) {
+            if (error) {
+                return callback({
+                    message: 'A ' + error.blame + ' has occurred: ' + error.message,
+                });
+            }
+            Auth.setToken(response.data);
+            callback(null);
+        });
+    }
+
+    private static setToken(token: string) {
+        Auth.authorised = true;
+        Auth.token = token;
+        localStorage.setItem('token', token);
+    }
+
+    public static destroyToken() {
+        Auth.authorised = false;
+        Auth.token = null;
+        localStorage.removeItem('token');
+    }
 
     public static isAuthorised(): boolean {
-        return this.authorised;
+        return Auth.authorised;
     }
 }

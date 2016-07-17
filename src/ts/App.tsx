@@ -17,16 +17,23 @@ function requireAuth(nextState: RouterState, replace: RedirectFunction) {
     if (!Auth.isAuthorised()) {
         replace({
             pathname: '/login',
-            state: { nextPathname: nextState.location.pathname }
+            state: {nextPathname: nextState.location.pathname},
+        });
+    }
+}
+
+function checkAuth(nextState: RouterState, replace: RedirectFunction) {
+    if (Auth.isAuthorised()) {
+        replace({
+            pathname: '/',
+            state: {nextPathname: nextState.location.pathname},
         });
     }
 }
 
 ReactDOM.render((
-    <div className="container">
-        <Router history={browserHistory}>
-            <Route path="/" component={Dashboard} onEnter={requireAuth} />
-            <Route path="/login" component={Login} />
-        </Router>
-    </div>
+    <Router history={browserHistory}>
+        <Route path="/" component={Dashboard} onEnter={requireAuth}/>
+        <Route path="/login" component={Login} onEnter={checkAuth}/>
+    </Router>
 ), document.getElementById('root'));
