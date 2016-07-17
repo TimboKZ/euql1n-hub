@@ -52,9 +52,16 @@ var pool = new pg.Pool({
 });
 
 /**
- * Setting up static files in public directory
+ * Setting up static files
  */
-app.use(express.static(__dirname + '/public'));
+app.use('/dist', express.static(__dirname + '/dist'));
+
+/**
+ * Server the index page
+ */
+app.get('/', function(req, res) {
+   res.render('index.html');
+});
 
 /**
  * Authorise the API request

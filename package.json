@@ -2,15 +2,18 @@
   "name": "euql1n-hub",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "dependencies": {
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
-    "pg": "^6.0.2"
+    "pg": "^6.0.2",
+    "react": "^15.2.1",
+    "react-dom": "^15.2.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.10.1"
+    "source-map-loader": "^0.1.5",
+    "ts-loader": "^0.8.2"
   }
 }
