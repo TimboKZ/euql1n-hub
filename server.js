@@ -57,13 +57,6 @@ var pool = new pg.Pool({
 app.use('/dist', express.static(__dirname + '/dist'));
 
 /**
- * Server the index page
- */
-app.get('/', function(req, res) {
-   res.render('index.html');
-});
-
-/**
  * Authorise the API request
  */
 app.post(API_PATH + '/auth', function (req, res) {
@@ -161,6 +154,13 @@ app.post(API_PATH + '/ongoing_subscriptions', function (req, res) {
             done();
         }, done);
     });
+});
+
+/**
+ * Routing all requests to index.html
+ */
+app.get('*', function(req, res) {
+    res.sendfile('index.html');
 });
 
 /**
