@@ -1,6 +1,7 @@
 import Auth from "./Auth";
 import * as React from "react";
 import {Component} from "react";
+import {Reminder} from "./Reminder";
 /**
  * Dashboard component.
  *
@@ -37,16 +38,9 @@ export class Dashboard extends Component<IDashboardProps, {}> {
                     </div>
                 </nav>
 
-                <ul className="list-group m-t-1">
-                    <li className="list-group-item list-group-item-success">Dapibus ac facilisis in</li>
-                    <li className="list-group-item list-group-item-info">Cras sit amet nibh libero</li>
-                    <li className="list-group-item list-group-item-warning">Porta ac consectetur ac</li>
-                    <li className="list-group-item list-group-item-danger">Vestibulum at eros</li>
-                    <li className="list-group-item list-group-item-success">Dapibus ac facilisis in</li>
-                    <li className="list-group-item list-group-item-info">Cras sit amet nibh libero</li>
-                    <li className="list-group-item list-group-item-warning">Porta ac consectetur ac</li>
-                    <li className="list-group-item list-group-item-danger">Vestibulum at eros</li>
-                </ul>
+                <div className="list-group m-t-1">
+                    <Reminder/>
+                </div>
             </div>
         );
     }

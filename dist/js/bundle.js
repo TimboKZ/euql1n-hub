@@ -183,6 +183,7 @@
 	var Auth_1 = __webpack_require__(1);
 	var React = __webpack_require__(5);
 	var react_1 = __webpack_require__(5);
+	var Reminder_1 = __webpack_require__(238);
 	var Dashboard = (function (_super) {
 	    __extends(Dashboard, _super);
 	    function Dashboard() {
@@ -194,7 +195,7 @@
 	        this.props.history.push('/login');
 	    };
 	    Dashboard.prototype.render = function () {
-	        return (React.createElement("div", {className: "container p-t-3"}, React.createElement("nav", {className: "navbar navbar-fixed-top navbar-light bg-faded"}, React.createElement("div", {className: "container"}, React.createElement("a", {className: "navbar-brand", href: "/"}, "euql1n Hub"), React.createElement("ul", {className: "nav navbar-nav"}, React.createElement("li", {className: "nav-item"}, React.createElement("a", {className: "nav-link", onClick: this.logout.bind(this), href: "#"}, "Logout"))))), React.createElement("ul", {className: "list-group m-t-1"}, React.createElement("li", {className: "list-group-item list-group-item-success"}, "Dapibus ac facilisis in"), React.createElement("li", {className: "list-group-item list-group-item-info"}, "Cras sit amet nibh libero"), React.createElement("li", {className: "list-group-item list-group-item-warning"}, "Porta ac consectetur ac"), React.createElement("li", {className: "list-group-item list-group-item-danger"}, "Vestibulum at eros"), React.createElement("li", {className: "list-group-item list-group-item-success"}, "Dapibus ac facilisis in"), React.createElement("li", {className: "list-group-item list-group-item-info"}, "Cras sit amet nibh libero"), React.createElement("li", {className: "list-group-item list-group-item-warning"}, "Porta ac consectetur ac"), React.createElement("li", {className: "list-group-item list-group-item-danger"}, "Vestibulum at eros"))));
+	        return (React.createElement("div", {className: "container p-t-3"}, React.createElement("nav", {className: "navbar navbar-fixed-top navbar-light bg-faded"}, React.createElement("div", {className: "container"}, React.createElement("a", {className: "navbar-brand", href: "/"}, "euql1n Hub"), React.createElement("ul", {className: "nav navbar-nav"}, React.createElement("li", {className: "nav-item"}, React.createElement("a", {className: "nav-link", onClick: this.logout.bind(this), href: "#"}, "Logout"))))), React.createElement("div", {className: "list-group m-t-1"}, React.createElement(Reminder_1.Reminder, null))));
 	    };
 	    return Dashboard;
 	}(react_1.Component));
@@ -26829,6 +26830,34 @@
 	
 	exports.default = (0, _createRouterHistory2.default)(_createHashHistory2.default);
 	module.exports = exports['default'];
+
+/***/ },
+/* 238 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(5);
+	var react_1 = __webpack_require__(5);
+	var Reminder = (function (_super) {
+	    __extends(Reminder, _super);
+	    function Reminder(props) {
+	        _super.call(this, props);
+	        this.state = {
+	            errorMessage: null,
+	        };
+	    }
+	    Reminder.prototype.render = function () {
+	        return (React.createElement("div", {href: "#", className: "list-group-item active"}, React.createElement("h4", {className: "list-group-item-heading"}, "List group item heading"), React.createElement("p", {className: "list-group-item-text"}, "Risus varius blandit.")));
+	    };
+	    return Reminder;
+	}(react_1.Component));
+	exports.Reminder = Reminder;
+
 
 /***/ }
 /******/ ]);
