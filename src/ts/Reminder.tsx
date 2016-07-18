@@ -1,7 +1,7 @@
-import Auth from "./Auth";
-import {IRouterContext} from "./interfaces";
-import * as React from "react";
-import {Component, ValidationMap} from "react";
+import Auth from './Auth';
+import {IRouterContext} from './interfaces';
+import * as React from 'react';
+import {Component, ValidationMap} from 'react';
 /**
  * Reminder component
  *
@@ -50,7 +50,7 @@ export class Reminder extends Component<IReminderProps, IReminderState> {
         router: React.PropTypes.object.isRequired,
     };
 
-    private logout(event: Event = null) {
+    private logout(event?: Event): void {
         if (event) {
             event.preventDefault();
         }
@@ -58,7 +58,7 @@ export class Reminder extends Component<IReminderProps, IReminderState> {
         this.context.router.push('/login');
     }
 
-    private complete(event: Event) {
+    private complete(event?: Event): void {
         event.preventDefault();
         if (confirm('Complete "' + this.props.reminder.name + '"?')) {
             Auth.ajaxPost('/api/v1/routine_reminders/' + this.props.reminder.id, {}, (error, response) => {
@@ -69,7 +69,6 @@ export class Reminder extends Component<IReminderProps, IReminderState> {
                     }
                     return alert(error.message);
                 }
-                console.log(response);
                 if (response.success) {
                     this.setState({
                         completed: new Date(),
@@ -90,10 +89,10 @@ export class Reminder extends Component<IReminderProps, IReminderState> {
      */
     public getCompletedString(): string {
         let monthNames = [
-            "January", "February", "March",
-            "April", "May", "June", "July",
-            "August", "September", "October",
-            "November", "December",
+            'January', 'February', 'March',
+            'April', 'May', 'June', 'July',
+            'August', 'September', 'October',
+            'November', 'December',
         ];
 
         let date = this.state.completed;
@@ -104,13 +103,13 @@ export class Reminder extends Component<IReminderProps, IReminderState> {
         return monthNames[monthIndex] + ' ' + day + ', ' + year;
     }
 
-    public render() {
+    public render(): JSX.Element {
         return (
             <a href="#" onClick={this.complete.bind(this)}
                className={'list-group-item' + (this.state.overdue ? ' list-group-item-warning' : '')}>
                 { this.state.overdue ? (
                     <span className="label label-warning label-pill pull-xs-right">Overdue</span>
-                ) : null}
+                ) : ''}
                 <p className="list-group-item-text">
                     <strong>{this.props.reminder.name}</strong>
                     <br/>

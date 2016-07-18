@@ -1,9 +1,9 @@
-import Auth from "./Auth";
-import {Dashboard} from "./Dashboard";
-import {Login} from "./Login";
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import {RedirectFunction, Route, Router, RouterState, browserHistory} from "react-router";
+import Auth from './Auth';
+import {Dashboard} from './Dashboard';
+import {Login} from './Login';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import {RedirectFunction, Route, Router, RouterState, browserHistory} from 'react-router';
 /**
  * Main euql1n-hub script.
  *
@@ -13,7 +13,7 @@ import {RedirectFunction, Route, Router, RouterState, browserHistory} from "reac
  * @version 0.0.1
  */
 
-function requireAuth(nextState: RouterState, replace: RedirectFunction) {
+function requireAuth(nextState: RouterState, replace: RedirectFunction): void {
     if (!Auth.isAuthorised()) {
         replace({
             pathname: '/login',
@@ -22,7 +22,7 @@ function requireAuth(nextState: RouterState, replace: RedirectFunction) {
     }
 }
 
-function checkAuth(nextState: RouterState, replace: RedirectFunction) {
+function checkAuth(nextState: RouterState, replace: RedirectFunction): void {
     if (Auth.isAuthorised()) {
         replace({
             pathname: '/',

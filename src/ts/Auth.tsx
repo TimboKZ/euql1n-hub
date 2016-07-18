@@ -1,4 +1,4 @@
-import {API, IApiError, IApiResponse, IUserCredentials} from "./Api";
+import {API, IApiError, IApiResponse, IUserCredentials} from './Api';
 /**
  * Auth class
  *
@@ -15,16 +15,16 @@ export interface IAuthError {
 
 export default class Auth {
     private static authorised: boolean = !!localStorage.getItem('token');
-    private static token: string = localStorage.getItem('token') || null;
+    private static token: string = localStorage.getItem('token') || undefined;
 
-    public static requestToken(request: IUserCredentials, callback: (error: IAuthError) => void) {
+    public static requestToken(request: IUserCredentials, callback: (error?: IAuthError) => void): void {
         if (!request.username || !request.password) {
             return callback({
                 message: 'Fill all fields.',
                 unauthorised: true,
             });
         }
-        API.post('/api/v1/auth', request, function (error, response) {
+        API.post('/api/v1/auth', request, function (error: IApiError, response: IApiResponse): void {
             if (error) {
                 return callback({
                     message: 'A ' + error.blame + ' has occurred: ' + error.message,
@@ -32,19 +32,19 @@ export default class Auth {
                 });
             }
             Auth.setToken(response.data);
-            callback(null);
+            callback();
         });
     }
 
-    private static setToken(token: string) {
+    private static setToken(token: string): void {
         Auth.authorised = true;
         Auth.token = token;
         localStorage.setItem('token', token);
     }
 
-    public static destroyToken() {
+    public static destroyToken(): void {
         Auth.authorised = false;
-        Auth.token = null;
+        Auth.token = undefined;
         localStorage.removeItem('token');
     }
 
@@ -54,27 +54,27 @@ export default class Auth {
 
     public static ajaxGet(url: string,
                           data: any = {},
-                          callback: (error: IAuthError, response: IApiResponse) => void) {
+                          callback: (error: IAuthError, response: IApiResponse) => void): void {
         data.auth_token = Auth.token;
         API.get(url, data, Auth.ajaxCallback.bind(this, callback));
     }
 
     public static ajaxPost(url: string,
                            data: any = {},
-                           callback: (error: IAuthError, response: IApiResponse) => void) {
+                           callback: (error: IAuthError, response: IApiResponse) => void): void {
         data.auth_token = Auth.token;
         API.post(url, data, Auth.ajaxCallback.bind(this, callback));
     }
 
-    public static ajaxCallback(callback: (error: IAuthError, response: IApiResponse) => void,
+    public static ajaxCallback(callback: (error: IAuthError, response?: IApiResponse) => void,
                                error: IApiError,
-                               response: IApiResponse) {
+                               response: IApiResponse): void {
         if (error) {
             return callback({
                 message: error.message,
                 unauthorised: error.status === 401 || error.status === 403,
-            }, null);
+            });
         }
-        callback(null, response);
+        callback(undefined, response);
     }
 }

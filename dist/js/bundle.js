@@ -102,7 +102,7 @@
 	                });
 	            }
 	            Auth.setToken(response.data);
-	            callback(null);
+	            callback();
 	        });
 	    };
 	    Auth.setToken = function (token) {
@@ -112,7 +112,7 @@
 	    };
 	    Auth.destroyToken = function () {
 	        Auth.authorised = false;
-	        Auth.token = null;
+	        Auth.token = undefined;
 	        localStorage.removeItem('token');
 	    };
 	    Auth.isAuthorised = function () {
@@ -133,12 +133,12 @@
 	            return callback({
 	                message: error.message,
 	                unauthorised: error.status === 401 || error.status === 403,
-	            }, null);
+	            });
 	        }
-	        callback(null, response);
+	        callback(undefined, response);
 	    };
 	    Auth.authorised = !!localStorage.getItem('token');
-	    Auth.token = localStorage.getItem('token') || null;
+	    Auth.token = localStorage.getItem('token') || undefined;
 	    return Auth;
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -172,7 +172,7 @@
 	            data: data,
 	            dataType: 'json',
 	            success: function (response) {
-	                callback(null, response);
+	                callback(undefined, response);
 	            },
 	            type: type,
 	            url: url,
@@ -190,7 +190,7 @@
 	                blame: blame,
 	                message: message,
 	                status: xhr.status,
-	            }, null);
+	            });
 	        });
 	    };
 	    return API;
@@ -222,13 +222,11 @@
 	        this.loadReminders();
 	    }
 	    Dashboard.prototype.logout = function (event) {
-	        if (event === void 0) { event = null; }
 	        if (event) {
 	            event.preventDefault();
 	        }
-	        console.log(this.context.router);
-	        // Auth.destroyToken();
-	        // this.context.router.push('/login');
+	        Auth_1.default.destroyToken();
+	        this.context.router.push('/login');
 	    };
 	    Dashboard.prototype.loadReminders = function () {
 	        var _this = this;
@@ -282,7 +280,7 @@
 	    function Login(props) {
 	        _super.call(this, props);
 	        this.state = {
-	            errorMessage: null,
+	            errorMessage: undefined,
 	        };
 	    }
 	    Login.prototype.signIn = function (event) {
@@ -300,7 +298,7 @@
 	        });
 	    };
 	    Login.prototype.render = function () {
-	        return (React.createElement("div", {className: "container m-t-1"}, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-4 col-md-offset-4"}, React.createElement("div", {className: "card"}, React.createElement("div", {className: "card-header"}, "Please sign in"), React.createElement("div", {className: "card-block"}, this.state.errorMessage ? (React.createElement("div", {className: "alert alert-danger", role: "alert"}, this.state.errorMessage)) : null, React.createElement("form", {onSubmit: this.signIn.bind(this)}, React.createElement("div", {className: "form-group"}, React.createElement("label", {className: "sr-only", htmlFor: "username"}, "Username"), React.createElement("div", {className: "input-group"}, React.createElement("div", {className: "input-group-addon"}, React.createElement("i", {className: "fa fa-user", "aria-hidden": "true"})), React.createElement("input", {ref: "username", type: "text", className: "form-control", id: "username", placeholder: "Username"}))), React.createElement("div", {className: "form-group"}, React.createElement("label", {className: "sr-only", htmlFor: "password"}, "Password"), React.createElement("div", {className: "input-group"}, React.createElement("div", {className: "input-group-addon"}, React.createElement("i", {className: "fa fa-unlock-alt", "aria-hidden": "true"})), React.createElement("input", {ref: "password", type: "password", className: "form-control", id: "password", placeholder: "Password"}))), React.createElement("input", {className: "btn btn-primary", type: "submit", value: "Login"}))))))));
+	        return (React.createElement("div", {className: "container m-t-1"}, React.createElement("div", {className: "row"}, React.createElement("div", {className: "col-md-4 col-md-offset-4"}, React.createElement("div", {className: "card"}, React.createElement("div", {className: "card-header"}, "Please sign in"), React.createElement("div", {className: "card-block"}, this.state.errorMessage ? (React.createElement("div", {className: "alert alert-danger", role: "alert"}, this.state.errorMessage)) : '', React.createElement("form", {onSubmit: this.signIn.bind(this)}, React.createElement("div", {className: "form-group"}, React.createElement("label", {className: "sr-only", htmlFor: "username"}, "Username"), React.createElement("div", {className: "input-group"}, React.createElement("div", {className: "input-group-addon"}, React.createElement("i", {className: "fa fa-user", "aria-hidden": "true"})), React.createElement("input", {ref: "username", type: "text", className: "form-control", id: "username", placeholder: "Username"}))), React.createElement("div", {className: "form-group"}, React.createElement("label", {className: "sr-only", htmlFor: "password"}, "Password"), React.createElement("div", {className: "input-group"}, React.createElement("div", {className: "input-group-addon"}, React.createElement("i", {className: "fa fa-unlock-alt", "aria-hidden": "true"})), React.createElement("input", {ref: "password", type: "password", className: "form-control", id: "password", placeholder: "Password"}))), React.createElement("input", {className: "btn btn-primary", type: "submit", value: "Login"}))))))));
 	    };
 	    Login.contextTypes = {
 	        router: React.PropTypes.object.isRequired,
@@ -26923,7 +26921,6 @@
 	        };
 	    }
 	    Reminder.prototype.logout = function (event) {
-	        if (event === void 0) { event = null; }
 	        if (event) {
 	            event.preventDefault();
 	        }
@@ -26942,7 +26939,6 @@
 	                    }
 	                    return alert(error.message);
 	                }
-	                console.log(response);
 	                if (response.success) {
 	                    _this.setState({
 	                        completed: new Date(),
@@ -26963,10 +26959,10 @@
 	     */
 	    Reminder.prototype.getCompletedString = function () {
 	        var monthNames = [
-	            "January", "February", "March",
-	            "April", "May", "June", "July",
-	            "August", "September", "October",
-	            "November", "December",
+	            'January', 'February', 'March',
+	            'April', 'May', 'June', 'July',
+	            'August', 'September', 'October',
+	            'November', 'December',
 	        ];
 	        var date = this.state.completed;
 	        var day = date.getDate();
@@ -26975,7 +26971,7 @@
 	        return monthNames[monthIndex] + ' ' + day + ', ' + year;
 	    };
 	    Reminder.prototype.render = function () {
-	        return (React.createElement("a", {href: "#", onClick: this.complete.bind(this), className: 'list-group-item' + (this.state.overdue ? ' list-group-item-warning' : '')}, this.state.overdue ? (React.createElement("span", {className: "label label-warning label-pill pull-xs-right"}, "Overdue")) : null, React.createElement("p", {className: "list-group-item-text"}, React.createElement("strong", null, this.props.reminder.name), React.createElement("br", null), this.props.reminder.description + ' Last completed on ' + this.getCompletedString(), this.state.overdue ? (React.createElement("strong", null, React.createElement("br", null), React.createElement("br", null), this.state.overdueDays + ' day' + (this.state.overdueDays === 1 ? '' : 's') +
+	        return (React.createElement("a", {href: "#", onClick: this.complete.bind(this), className: 'list-group-item' + (this.state.overdue ? ' list-group-item-warning' : '')}, this.state.overdue ? (React.createElement("span", {className: "label label-warning label-pill pull-xs-right"}, "Overdue")) : '', React.createElement("p", {className: "list-group-item-text"}, React.createElement("strong", null, this.props.reminder.name), React.createElement("br", null), this.props.reminder.description + ' Last completed on ' + this.getCompletedString(), this.state.overdue ? (React.createElement("strong", null, React.createElement("br", null), React.createElement("br", null), this.state.overdueDays + ' day' + (this.state.overdueDays === 1 ? '' : 's') +
 	            ' overdue. Tap to complete.')) : ''), React.createElement("div", {className: "clearfix"})));
 	    };
 	    Reminder.contextTypes = {

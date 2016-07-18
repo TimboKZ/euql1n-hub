@@ -1,8 +1,8 @@
-import Auth from "./Auth";
-import {IReminderApi, Reminder} from "./Reminder";
-import {IRouterContext} from "./interfaces";
-import * as React from "react";
-import {Component, ValidationMap} from "react";
+import Auth from './Auth';
+import {IReminderApi, Reminder} from './Reminder';
+import {IRouterContext} from './interfaces';
+import * as React from 'react';
+import {Component, ValidationMap} from 'react';
 /**
  * Dashboard component.
  *
@@ -34,16 +34,15 @@ export class Dashboard extends Component<IDashboardProps, IDashboardState> {
         router: React.PropTypes.object.isRequired,
     };
 
-    private logout(event: Event = null) {
+    private logout(event?: Event): void {
         if (event) {
             event.preventDefault();
         }
-        console.log(this.context.router);
-        // Auth.destroyToken();
-        // this.context.router.push('/login');
+        Auth.destroyToken();
+        this.context.router.push('/login');
     }
 
-    private loadReminders() {
+    private loadReminders(): void {
         Auth.ajaxGet('/api/v1/routine_reminders', {}, (error, response) => {
             if (error) {
                 if (error.unauthorised) {
@@ -68,7 +67,7 @@ export class Dashboard extends Component<IDashboardProps, IDashboardState> {
         ));
     }
 
-    public render() {
+    public render(): JSX.Element {
         return (
             <div className="container p-t-3">
                 <nav className="navbar navbar-fixed-top navbar-light bg-faded">

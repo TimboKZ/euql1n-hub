@@ -1,8 +1,8 @@
-import {IUserCredentials} from "./Api";
-import Auth from "./Auth";
-import {IRouterContext} from "./interfaces";
-import * as React from "react";
-import {Component, ReactInstance, ValidationMap} from "react";
+import {IUserCredentials} from './Api';
+import Auth from './Auth';
+import {IRouterContext} from './interfaces';
+import * as React from 'react';
+import {Component, ReactInstance, ValidationMap} from 'react';
 /**
  * Login component.
  *
@@ -36,11 +36,11 @@ export class Login extends Component<ILoginProps, ILoginState> {
     constructor(props: ILoginProps) {
         super(props);
         this.state = {
-            errorMessage: null,
+            errorMessage: undefined,
         };
     }
 
-    private signIn(event: Event) {
+    private signIn(event: Event): void {
         event.preventDefault();
         let credentials: IUserCredentials = {
             password: this.refs.password.value,
@@ -55,7 +55,7 @@ export class Login extends Component<ILoginProps, ILoginState> {
         });
     }
 
-    public render() {
+    public render(): JSX.Element {
         return (
             <div className="container m-t-1">
                 <div className="row">
@@ -67,7 +67,7 @@ export class Login extends Component<ILoginProps, ILoginState> {
                                     <div className="alert alert-danger" role="alert">
                                         {this.state.errorMessage}
                                     </div>
-                                ) : null}
+                                ) : ''}
                                 <form onSubmit={this.signIn.bind(this)}>
                                     <div className="form-group">
                                         <label className="sr-only" htmlFor="username">Username</label>
