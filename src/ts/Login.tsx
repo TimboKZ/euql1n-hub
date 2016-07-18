@@ -1,7 +1,8 @@
 import {IUserCredentials} from "./Api";
 import Auth from "./Auth";
+import {IRouterContext} from "./interfaces";
 import * as React from "react";
-import {Component} from "react";
+import {Component, ReactInstance, ValidationMap} from "react";
 /**
  * Login component.
  *
@@ -12,11 +13,6 @@ import {Component} from "react";
  */
 
 export interface ILoginProps {
-    compiler: string;
-    framework: string;
-    location: any;
-    router: any;
-    history: any;
 }
 
 export interface ILoginState {
@@ -24,13 +20,18 @@ export interface ILoginState {
 }
 
 export interface ILoginRefs {
-    [key: string]: Component<any, any> | Element;
+    [key: string]: ReactInstance;
     password: HTMLInputElement;
     username: HTMLInputElement;
 }
 
 export class Login extends Component<ILoginProps, ILoginState> {
+    public context: IRouterContext;
     public refs: ILoginRefs;
+
+    public static contextTypes: ValidationMap<any> = {
+        router: React.PropTypes.object.isRequired,
+    };
 
     constructor(props: ILoginProps) {
         super(props);
@@ -50,7 +51,7 @@ export class Login extends Component<ILoginProps, ILoginState> {
             if (error) {
                 return this.setState({errorMessage: error.message});
             }
-            this.props.history.push('/');
+            this.context.router.push('/');
         });
     }
 

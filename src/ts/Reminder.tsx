@@ -1,6 +1,7 @@
 import Auth from "./Auth";
+import {IRouterContext} from "./interfaces";
 import * as React from "react";
-import {Component} from "react";
+import {Component, ValidationMap} from "react";
 /**
  * Reminder component
  *
@@ -22,7 +23,6 @@ export interface IReminderApi {
 
 export interface IReminderProps {
     reminder: IReminderApi;
-    history: any;
 }
 
 export interface IReminderState {
@@ -32,6 +32,8 @@ export interface IReminderState {
 }
 
 export class Reminder extends Component<IReminderProps, IReminderState> {
+    public context: IRouterContext;
+
     constructor(props: IReminderProps) {
         super(props);
         let now = new Date();
@@ -44,12 +46,16 @@ export class Reminder extends Component<IReminderProps, IReminderState> {
         };
     }
 
+    public static contextTypes: ValidationMap<any> = {
+        router: React.PropTypes.object.isRequired,
+    };
+
     private logout(event: Event = null) {
         if (event) {
             event.preventDefault();
         }
         Auth.destroyToken();
-        this.props.history.push('/login');
+        this.context.router.push('/login');
     }
 
     private complete(event: Event) {

@@ -1,7 +1,8 @@
 import Auth from "./Auth";
 import {IReminderApi, Reminder} from "./Reminder";
+import {IRouterContext} from "./interfaces";
 import * as React from "react";
-import {Component} from "react";
+import {Component, ValidationMap} from "react";
 /**
  * Dashboard component.
  *
@@ -12,7 +13,6 @@ import {Component} from "react";
  */
 
 export interface IDashboardProps {
-    history: any;
 }
 
 export interface IDashboardState {
@@ -20,6 +20,8 @@ export interface IDashboardState {
 }
 
 export class Dashboard extends Component<IDashboardProps, IDashboardState> {
+    public context: IRouterContext;
+
     constructor(props: IDashboardProps) {
         super(props);
         this.state = {
@@ -28,12 +30,17 @@ export class Dashboard extends Component<IDashboardProps, IDashboardState> {
         this.loadReminders();
     }
 
+    public static contextTypes: ValidationMap<any> = {
+        router: React.PropTypes.object.isRequired,
+    };
+
     private logout(event: Event = null) {
         if (event) {
             event.preventDefault();
         }
-        Auth.destroyToken();
-        this.props.history.push('/login');
+        console.log(this.context.router);
+        // Auth.destroyToken();
+        // this.context.router.push('/login');
     }
 
     private loadReminders() {
