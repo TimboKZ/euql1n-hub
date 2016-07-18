@@ -24,12 +24,13 @@ export interface ILoginState {
 }
 
 export interface ILoginRefs {
+    [key: string]: Component<any, any> | Element;
     password: HTMLInputElement;
     username: HTMLInputElement;
 }
 
 export class Login extends Component<ILoginProps, ILoginState> {
-    protected refs: ILoginRefs;
+    public refs: ILoginRefs;
 
     constructor(props: ILoginProps) {
         super(props);
